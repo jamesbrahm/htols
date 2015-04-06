@@ -1,4 +1,4 @@
-import base64
+import codecs
 import argparse
 import sys
 
@@ -10,13 +10,14 @@ def argstuff():
 	args = parser.parse_args()
 
 def enc(line):
-	encoded = base64.b64encode(line)
-	reversed = encoded[::-1]
-	return reversed
+	line = line.encode("utf-8")
+	enctext = codecs.encode(line, "hex").decode("utf-8")
+	revtext = enctext[::-1]
+	return revtext
 
 def dec(line):
 	reversed = line[::-1]
-	decoded = base64.b64decode(reversed)
+	decoded = codecs.decode(reversed, "hex").decode("utf-8")
 	return decoded
 
 def main():
