@@ -4,6 +4,9 @@ import codecs
 import argparse
 import sys
 import datetime
+import time
+import socket
+import os
 
 # Conditional imports
 platform = sys.platform
@@ -47,7 +50,7 @@ def scoreVuln(vuln):  # The master scoring function
 	elif(args[0] == "USER_PASSWORD_NOT"):
 		returnObj = score.USER_PASSWORD_NOT(args)
 	elif(args[0] == "USER_PASSWORD_IS"):
-		returnObj = score.PASSWORD_IS(args)
+		returnObj = score.USER_PASSWORD_IS(args)
 	elif(args[0] == "USER_LOCKED"):
 		returnObj = score.USER_LOCKED(args)
 	elif(args[0] == "USER_EXIST"):
@@ -65,11 +68,11 @@ def scoreVuln(vuln):  # The master scoring function
 
 	# Software
 	elif(args[0] == "SOFTWARE_INSTALLED"):
-		returnObj = score.CMD(args)
+		returnObj = score.SOFTWARE_INSTALLED(args)
 	elif(args[0] == "SOFTWARE_NOT_INSTALLED"):
-		returnObj = score.CMD(args)
+		returnObj = score.SOFTWARE_NOT_INSTALLED(args)
 	elif(args[0] == "SOFTWARE_NEWER"):
-		returnObj = score.CMD(args)
+		returnObj = score.SOFTWARE_NEWER(args)
 
 	# File Operations
 	elif(args[0] == "LINE_EXIST"):
@@ -110,12 +113,21 @@ def genReport():
 	global pointLossLines
 	global totalScore
 	global totalVDL
+	global teamName
+	global startTime
+
+	# Time
+	secdiff = int(time.time()) - startTime
+	timediff = str(datetime.timedelta(seconds=secdiff))
+
 	reportlines = []
 	reportlines.append("<html> <header> <title> HTOLS Scoring Report </title </header>")
 	reportlines.append('<body bgcolor=black text=#00FF00>')
 	reportlines.append('<style> body{font-family:monospace}</style>')
 	reportlines.append("<center> <h1> HTOLS Scoring Report </h1>")
+	reportlines.append("<h2> Team "+teamName+" </h2>")
 	reportlines.append("<p> Generated at: "+str(datetime.datetime.now())+"</p>")
+	reportlines.append("<p> Running time: "+timediff+"</p>")
 	reportlines.append("<h3> Score: "+str(totalScore)+"</h3> </center> <br>")
 	reportlines.append("<br> <h3> "+str(len(pointGainLines))+" out of "+str(totalVDL)+" issues fixed</h3>")
 	for item in pointGainLines:
@@ -130,16 +142,68 @@ def genReport():
 		reportlines.append(item + " <br>")
 
 	reportlines.append("</body> </html>")
+	reportlines.append("\n<!--"+str(totalScore)+"-->")
 
 
 	reportFile = open("ScoreReport.html", "w")
 	for line in reportlines:
 		reportFile.write(line)
+	reportFile.close()
+
+	# Notify
+	if(totalScore > oldScore):
+		score.pushNotification("You have gained points!  Score: "+str(totalScore))
+	if(totalScore < oldScore):
+		score.pushNotification("You have lost points.  Score: "+str(totalScore))
+
+	result = sendRemoteReport()
+
+def sendRemoteReport():
+	global teamName
+	global imageName
+	global args
+	if(args.TARGET == "local"):
+		return 0
+
+
+
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.connect((args.TARGET, 9999))
+
+	# Handshake
+	print(sock.recv(1024))
+	sock.send(bytes(teamName, "utf-8"))
+	print(sock.recv(1024))
+	sock.send(bytes(imageName, "utf-8"))
+	print(sock.recv(1024))
+	sock.send(b'Blue')
+
+	scoreReport = open("ScoreReport.html", "rb")
+	buff = scoreReport.read(1024)
+
+	while buff:
+		sock.send(buff)
+		buff = scoreReport.read(1024)
+	scoreReport.close()
+	print("done")
+	sock.close()
+
+
 
 # Misc
 
 def getScoringData():
-	vdlFile = open("scoring.dat", "r")
+	global imageName
+
+	files = os.listdir(".")
+	for f in files:
+		if(f.endswith(".dat")):
+			filename = f
+			break
+
+	imageName = filename[:-4]
+
+	vdlFile = open(filename, "r")
 	enclines = vdlFile.readlines()
 	vdlLines = []
 	for line in enclines:
@@ -148,12 +212,12 @@ def getScoringData():
 
 	# DEBUG CODE GOES HERE #
 	# NOT FOR PRODUCTION USE #
-	vdlLines.append("LINE_EXIST; dog; /bears; dog bear; 3")
+	vdlLines.append("LINE_EXIST; dog; /bears; dog bear; 4")
 	vdlLines.append("LINE_NOT_EXIST; dog; /bears; no dog bear; 4")
-	vdlLines.append("MAX_PASS_AGE; 99999999; 10")
-	vdlLines.append("USER_IN_GROUP; jbrahm; adm; 6")
-	vdlLines.append("USER_NOT_IN_GROUP; mwagner; adm; 3")
-	vdlLines.append("USER_EXIST; jbrahm; 4")
+	vdlLines.append("MAX_PASS_AGE; 99999999; 7")
+	vdlLines.append("USER_IN_GROUP; jbrahm; adm; 9")
+	vdlLines.append("USER_NOT_IN_GROUP; mwagner; adm; 4")
+	vdlLines.append("USER_EXIST; jbrahm; 5")
 
 	# END DEBUG CODE #
 
@@ -168,13 +232,29 @@ def main():
 	pointLossLines = []
 	global totalScore
 	totalScore = 0
+	global oldScore
+	f = open("ScoreReport.html")
+	scoreLine = f.readlines()[-1]
+	f.close()
+	score = scoreLine[4:]
+	oldScore = int(score[:-3])
+
+
 	global totalVDL
 	totalVDL = 0
+
+	global teamName
+	global startTime
+	f = open("teamID", "r")
+	flines = f.readlines()
+	startTime = int(flines[0].strip())
+	teamName = flines[1].strip()
+
 	for line in vdlLines:
 		scoreVuln(line)
 
 	genReport()
 
 	
-
-main()
+if __name__ == '__main__':
+	main()

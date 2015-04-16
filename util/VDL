@@ -1,3 +1,6 @@
+# meta
+IMAGE_ID; [IMAGE_NAME]; [PLATFORM]
+
 # User account management
 
 USER_PASSWORD_NOT; [USERNAME]; [ORIGINAL_PASS]; [POINTS]

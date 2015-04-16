@@ -1,0 +1,5 @@
+print("i hate")
+scoreReport = open("ScoreReport.html", "rb")
+buff = scoreReport.read(1024)
+print(buff)
+print("life")

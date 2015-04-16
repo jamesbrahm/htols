@@ -1,5 +1,6 @@
 import subprocess
 import os
+import crypt
 
 def CMD(args):
 	print(args)
@@ -10,10 +11,27 @@ def USER_PASSWORD_NOT(args):
 	()
 
 def USER_PASSWORD_IS(args):
-	()
+	user = args[1]
+	password = args[2]
+	points = args[3]
+	cmd = '''awk -F: '($1 == "'''+user+'''") {print}' /etc/shadow '''
+	shadowLine = runCMD(cmd)
+	salt = shadowLine.split(":")[1].split("$")[2]
+	shadowhash = shadowLine.split(":")[1]
+	testhash = crypt.crypt
+	return [0, ""]
+	#testhash = crypt.crypt(password, 
 
 def USER_LOCKED(args):
-	()
+	user = args[1]
+	points = args[2]
+
+	cmd = "passwd -S "+user
+	out = runCMD(cmd)
+	status = out.split()[1]
+	if "L" in status:
+		return [points, "User "+user+" locked"]
+	return [0, ""]
 	
 def USER_EXIST(args):
 	user = args[1]
@@ -72,10 +90,23 @@ def MAX_PASS_AGE(args):
 	return [0, ""]
 
 def SOFTWARE_INSTALLED(args):
-	()
+	package = args[1]
+	points = args[2]
+	softwareInstalled = runCMD("dpkg --get-selections | grep -v deinstall")
+	for item in softwareInstalled:
+		if (item.split()[0] == package):
+			return [points, "Package "+package+" is installed"]
+	return [0, ""]
 
 def SOFTWARE_NOT_INSTALLED(args):
-	()
+	package = args[1]
+	points = args[2]
+	softwareInstalled = runCMD("dpkg --get-selections | grep -v deinstall")
+	softwareInstalled = softwareInstalled.split("\n")
+	for item in softwareInstalled:
+		if (item.split()[0] == package):
+			return [0, ""]
+	return [points, "Package "+package+" is has been removed"]
 
 def SOFTWARE_NEWER(args):
 	()
@@ -139,3 +170,11 @@ def runCMD(cmd):
 	out = subprocess.check_output(cmd, shell=True)
 	text = out.decode("utf-8").strip()
 	return text
+
+
+# Other functions
+
+def pushNotification(message):
+	message = message.strip()
+	cmd = 'notify-send "'+message+'"'
+	os.system(cmd)
