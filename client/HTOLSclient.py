@@ -171,11 +171,11 @@ def sendRemoteReport():
 	sock.connect((args.TARGET, 9999))
 
 	# Handshake
-	print(sock.recv(1024))
+	sock.recv(1024)
 	sock.send(bytes(teamName, "utf-8"))
-	print(sock.recv(1024))
+	sock.recv(1024)
 	sock.send(bytes(imageName, "utf-8"))
-	print(sock.recv(1024))
+	sock.recv(1024)
 	sock.send(b'Blue')
 
 	scoreReport = open("ScoreReport.html", "rb")
@@ -185,7 +185,7 @@ def sendRemoteReport():
 		sock.send(buff)
 		buff = scoreReport.read(1024)
 	scoreReport.close()
-	print("done")
+	print("Report sent to "+str(args.TARGET))
 	sock.close()
 
 

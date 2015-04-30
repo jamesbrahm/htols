@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config>
+	<settings>
+		<listen>1</listen>
+		<probeInterval>5</probeInterval>
+		<pointsPerCheck>2</pointsPerCheck>
+	</settings>
+
+	<team name="CyberSloths">
+		<server name="Test Image" ip="127.0.0.1" script="test.sh"/>
+	</team>
+
+</config>
