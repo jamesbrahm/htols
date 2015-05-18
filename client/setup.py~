@@ -1,0 +1,14 @@
+import os
+import sys
+
+plat = sys.platform
+
+if platform.startswith("linux"):
+	plat = "linux"
+elif platform.startswith("win"):
+	plat = "win"
+else:
+	print("Unrecognized platform")
+	sys.exit()
+
+

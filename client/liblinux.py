@@ -7,8 +7,24 @@ def CMD(args):
 	returnObj = [1, "score error"]
 	return returnObj
 
+def TEST1():
+	var = "morgan"
+
+def TEST2():
+	print(var)
+
 def USER_PASSWORD_NOT(args):
-	()
+	user = args[1]
+	password = args[2]
+	points = args[3]
+	cmd = '''awk -F: '($1 == "'''+user+'''") {print}' /etc/shadow '''
+	shadowLine = runCMD(cmd)
+	salt = shadowLine.split(":")[1].split("$")[2]
+	shadowhash = shadowLine.split(":")[1]
+	testhash = crypt.crypt(password, "$6$"+salt)
+	if(testhash != shadowhash):
+		return[points, "User "+user+" has a new password"]
+	return [0, ""]
 
 def USER_PASSWORD_IS(args):
 	user = args[1]
@@ -18,9 +34,11 @@ def USER_PASSWORD_IS(args):
 	shadowLine = runCMD(cmd)
 	salt = shadowLine.split(":")[1].split("$")[2]
 	shadowhash = shadowLine.split(":")[1]
-	testhash = crypt.crypt
+	testhash = crypt.crypt(password, "$6$"+salt)
+	if(testhash == shadowhash):
+		return[points, "User "+user+" has the correct password"]
 	return [0, ""]
-	#testhash = crypt.crypt(password, 
+ 
 
 def USER_LOCKED(args):
 	user = args[1]
@@ -72,21 +90,6 @@ def USER_NOT_IN_GROUP(args):
 	members = membersList.split(",")
 	if user not in members:
 		return [points, user+" removed from "+group+" group"]
-	return [0, ""]
-
-def MAX_PASS_AGE(args):
-	value = args[1]
-	points = args[2]
-	f = open("/etc/login.defs", "r")
-	flines = f.readlines()
-	lines = stripComments(flines)
-	relLines = []
-	for item in lines:
-		if "PASS_MAX_DAYS" in item:
-			relLines.append(item)
-	days = relLines[-1].split()[1]
-	if(days <= value):
-		return [points, "The maximum password age is "+str(value)+" days or less"]
 	return [0, ""]
 
 def SOFTWARE_INSTALLED(args):
@@ -155,6 +158,27 @@ def FILE_NOT_EXIST(args):
 		return [points, "File "+filename+" has been removed"]
 	else:
 		return [0, ""]
+
+
+# Security Policies
+def SECURITY_POLICY(args):
+	()
+
+# helper functions
+def MAX_PASS_AGE(args):
+	value = args[1]
+	points = args[2]
+	f = open("/etc/login.defs", "r")
+	flines = f.readlines()
+	lines = stripComments(flines)
+	relLines = []
+	for item in lines:
+		if "PASS_MAX_DAYS" in item:
+			relLines.append(item)
+	days = relLines[-1].split()[1]
+	if(days <= value):
+		return [points, "The maximum password age is "+str(value)+" days or less"]
+	return [0, ""]
 
 # Utility functions
 def stripComments(flines):

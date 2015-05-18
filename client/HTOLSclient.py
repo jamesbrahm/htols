@@ -62,9 +62,9 @@ def scoreVuln(vuln):  # The master scoring function
 	elif(args[0] == "USER_NOT_IN_GROUP"):
 		returnObj = score.USER_NOT_IN_GROUP(args)
 
-	# Password Policy
-	elif(args[0] == "MAX_PASS_AGE"):
-		returnObj = score.MAX_PASS_AGE(args)
+	# Security Policies
+	elif(args[0] == "SECURITY_POLICY"):
+		returnObj = score.SECURITY_POLICY(args)
 
 	# Software
 	elif(args[0] == "SOFTWARE_INSTALLED"):
@@ -212,12 +212,7 @@ def getScoringData():
 
 	# DEBUG CODE GOES HERE #
 	# NOT FOR PRODUCTION USE #
-	vdlLines.append("LINE_EXIST; dog; /bears; dog bear; 4")
-	vdlLines.append("LINE_NOT_EXIST; dog; /bears; no dog bear; 4")
-	vdlLines.append("MAX_PASS_AGE; 99999999; 7")
-	vdlLines.append("USER_IN_GROUP; jbrahm; adm; 9")
-	vdlLines.append("USER_NOT_IN_GROUP; mwagner; adm; 4")
-	vdlLines.append("USER_EXIST; jbrahm; 5")
+
 
 	# END DEBUG CODE #
 
@@ -233,11 +228,14 @@ def main():
 	global totalScore
 	totalScore = 0
 	global oldScore
-	f = open("ScoreReport.html")
-	scoreLine = f.readlines()[-1]
-	f.close()
-	score = scoreLine[4:]
-	oldScore = int(score[:-3])
+	if(os.path.isfile("ScoreReport.html")):
+		f = open("ScoreReport.html")
+		scoreLine = f.readlines()[-1]
+		f.close()
+		somescore = scoreLine[4:]
+		oldScore = int(somescore[:-3])
+	else:
+		oldScore = 0
 
 
 	global totalVDL
@@ -249,6 +247,7 @@ def main():
 	flines = f.readlines()
 	startTime = int(flines[0].strip())
 	teamName = flines[1].strip()
+
 
 	for line in vdlLines:
 		scoreVuln(line)
