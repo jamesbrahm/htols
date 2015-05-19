@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 def CMD(args):
 	print(args)
@@ -15,10 +16,24 @@ def USER_LOCKED(args):
 	()
 	
 def USER_EXIST(args):
-	()
+	user = args[1]
+	points = args[2]
+	cmd = 'net user'
+	output = runCMD(cmd).split()[5:-4]
+	if(user in output):
+		return [points, "User "+user+" exists"]
+	else:
+		return [0, ""]
 
 def USER_NOT_EXIST(args):
-	()
+	user = args[1]
+	points = args[2]
+	cmd = 'net user'
+	output = runCMD(cmd).split()[5:-4]
+	if(user not in output):
+		return [points, "User "+user+" does not exist"]
+	else:
+		return [0, ""]
 
 def USER_IN_GROUP(args):
 	user = args[1]
@@ -27,12 +42,26 @@ def USER_IN_GROUP(args):
 	cmd = 'net localgroup "'+group+'"'
 	output = runCMD(cmd)
 	outputlines = output.split("\n")
-	linenum = outputlines.index("-------------------------------------------------------------------------------")
-	usersingroup = outputlines[linenum+1:-1]
-
+	linenum = outputlines.index('Members\r')
+	usersingroup = [x.strip() for x in outputlines[linenum+3:-1]]
+	if(user in usersingroup):
+		return[points, "User "+user+" is in the "+group+" group"]
+	else:
+		return [0, ""]
 
 def USER_NOT_IN_GROUP(args):
-	()
+	user = args[1]
+	group = args[2]
+	points = args[3]
+	cmd = 'net localgroup "'+group+'"'
+	output = runCMD(cmd)
+	outputlines = output.split("\n")
+	linenum = outputlines.index('Members\r')
+	usersingroup = [x.strip() for x in outputlines[linenum+3:-1]]
+	if(user not in usersingroup):
+		return[points, "User "+user+" is not in the "+group+" group"]
+	else:
+		return [0, ""]
 
 def SOFTWARE_INSTALLED(args):
 	()
@@ -125,6 +154,9 @@ def SECURITY_SETTING_NOT(args):
 		return [points, message]
 
 # Utility functions
+
+def pushNotification(message):
+	()
 
 def stripComments(flines):
 	lines = []
