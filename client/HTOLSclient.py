@@ -212,8 +212,6 @@ def getScoringData():
 
 	# DEBUG CODE GOES HERE #
 	# NOT FOR PRODUCTION USE #
-	vdlLines.append("USER_IN_GROUP; mal; Administrators; 5")
-	vdlLines.append("USER_EXIST; mal; 7")
 
 	# END DEBUG CODE #
 

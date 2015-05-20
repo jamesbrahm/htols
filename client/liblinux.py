@@ -7,12 +7,6 @@ def CMD(args):
 	returnObj = [1, "score error"]
 	return returnObj
 
-def TEST1():
-	var = "morgan"
-
-def TEST2():
-	print(var)
-
 def USER_PASSWORD_NOT(args):
 	user = args[1]
 	password = args[2]
@@ -55,7 +49,7 @@ def USER_EXIST(args):
 	user = args[1]
 	points = args[2]
 	out = runCMD("id -u "+user)
-	if "no such user" in out:
+	if out == "error":
 		return [0, ""]
 	return [points, "User "+user+" exists"]
 
@@ -64,7 +58,7 @@ def USER_NOT_EXIST(args):
 	user = args[1]
 	points = args[2]
 	out = runCMD("id -u "+user)
-	if "no such user" in out:
+	if(out != "error"):
 		return [points, "User "+user+" has been removed"]
 	return [0, ""]
 
@@ -113,6 +107,14 @@ def SOFTWARE_NOT_INSTALLED(args):
 
 def SOFTWARE_NEWER(args):
 	()
+
+def FIREWALL_ENABLED(args):
+	points = args[1]
+	output = runCMD("ufw status")
+	if("active" in output):
+		return [points, "The firewall has been enabled"]
+	else:
+		return [0, ""]
 
 def LINE_EXIST(args):
 	line = args[1]
@@ -191,8 +193,12 @@ def stripComments(flines):
 	return lines
 
 def runCMD(cmd):
-	out = subprocess.check_output(cmd, shell=True)
-	text = out.decode("utf-8").strip()
+	try:
+		out = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+		text = out.decode("utf-8").strip()
+	except:
+		text = "error"
+	
 	return text
 
 
