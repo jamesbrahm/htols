@@ -12,7 +12,11 @@ def linux():
 		os.mkdir("/opt/htols")
 	os.system("cp HTOLSclient.pyc /opt/htols")
 	os.system("cp liblinux.pyc /opt/htols")
-	os.system("cp 
+	os.system("cp setTeam.py /opt/setTeam.py")
+
+	if(os.path.isfile("/var/spool/cron/crontabs/root"):
+		f = open("/var/spool/cron/crontabs/root"):
+	
 
 
 def main():

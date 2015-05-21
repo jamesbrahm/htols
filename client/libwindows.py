@@ -1,16 +1,11 @@
 import subprocess
 import os
+import unicodedata
 
 def CMD(args):
 	print(args)
 	returnObj = [1, "score error"]
 	return returnObj
-
-def USER_PASSWORD_NOT(args):
-	()
-
-def USER_PASSWORD_IS(args):
-	()
 
 def USER_LOCKED(args):
 	()
@@ -64,10 +59,23 @@ def USER_NOT_IN_GROUP(args):
 		return [0, ""]
 
 def SOFTWARE_INSTALLED(args):
-	()
+	software = args[1]
+	points = args[2]
+	output = runCMD("wmic product get name").split("\n")
+	for line in output:
+		if(software in line):
+			return [points, software+" is installed"]
+	return [0, ""]
 
 def SOFTWARE_NOT_INSTALLED(args):
-	()
+	software = args[1]
+	points = args[2]
+	output = runCMD("wmic product get name").split("\n")
+
+	for line in output:
+		if(software in line):
+			return [0, ""]
+	return [points, software+" is not installed"]
 
 def SOFTWARE_NEWER(args):
 	()
@@ -125,21 +133,23 @@ def SECURITY_SETTING_IS(args):
 
 	cmd = "secedit /export /cfg secedit.conf"
 	runCMD(cmd)
-	f = open(secedit.conf, "r")
+	f = open("secedit.conf", "r", encoding="utf-16")
 	exported = f.readlines()
 	theline = ""
 	for line in exported:
+#		line = l.encode("ascii", errors = "replace").decode("ascii", errors = "ignore")
 		if(setting in line):
 			theline = line
 			break
 	actualsetting = theline.split("=")[1].strip()
-	if(setting[0] == "<"):
-		if(actualsetting < setting[1:]):
+	if(value[0] == "<"):
+		if(int(actualsetting) < int(value[1:])):
 			return [points, message]
-	elif(setting[0] == ">"):
-		if(actualsetting > setting[1:]):
+	elif(value[0] == ">"):
+		if(int(actualsetting) > int(value[1:])):
 			return [points, message]
 	elif(setting == actualsetting):
+
 		return [points, message]
 	else:
 		()
@@ -152,6 +162,8 @@ def SECURITY_SETTING_NOT(args):
 	returnstuff = SECURITY_SETTING_IS(args)
 	if(returnstuff[1] == ""):
 		return [points, message]
+	else:
+		return [0, ""]
 
 # Utility functions
 

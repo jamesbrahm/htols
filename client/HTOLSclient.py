@@ -63,8 +63,11 @@ def scoreVuln(vuln):  # The master scoring function
 		returnObj = score.USER_NOT_IN_GROUP(args)
 
 	# Security Policies
-	elif(args[0] == "SECURITY_POLICY"):
-		returnObj = score.SECURITY_POLICY(args)
+	elif(args[0] == "SECURITY_SETTING_IS"):
+		returnObj = score.SECURITY_SETTING_IS(args)
+
+	elif(args[0] == "SECURITY_SETTING_NOT"):
+		returnObj = score.SECURITY_SETTING_NOT(args)
 
 	# Software
 	elif(args[0] == "SOFTWARE_INSTALLED"):
@@ -212,7 +215,9 @@ def getScoringData():
 
 	# DEBUG CODE GOES HERE #
 	# NOT FOR PRODUCTION USE #
-
+	vdlLines.append("SECURITY_SETTING_IS; MaximumPasswordAge; <100; A maximum password age has been set; 10")
+	vdlLines.append('SECURITY_SETTING_NOT; NewGuestName; "Guest"; Guest renamed; 7')
+	vdlLines.append("SOFTWARE_INSTALLED; Google Chrome; 3")
 	# END DEBUG CODE #
 
 	return vdlLines
