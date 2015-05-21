@@ -69,6 +69,9 @@ def scoreVuln(vuln):  # The master scoring function
 	elif(args[0] == "SECURITY_SETTING_NOT"):
 		returnObj = score.SECURITY_SETTING_NOT(args)
 
+	elif(args[0] == "FIREWALL_ENABLED"):
+		returnObj = score.FIREWALL_ENABLED(args)
+
 	# Software
 	elif(args[0] == "SOFTWARE_INSTALLED"):
 		returnObj = score.SOFTWARE_INSTALLED(args)
@@ -76,6 +79,9 @@ def scoreVuln(vuln):  # The master scoring function
 		returnObj = score.SOFTWARE_NOT_INSTALLED(args)
 	elif(args[0] == "SOFTWARE_NEWER"):
 		returnObj = score.SOFTWARE_NEWER(args)
+
+	elif(args[0] == "SERVICE_DISABLED"):
+		returnObj = score.SERVICE_DISABLED(args)
 
 	# File Operations
 	elif(args[0] == "LINE_EXIST"):
@@ -215,9 +221,6 @@ def getScoringData():
 
 	# DEBUG CODE GOES HERE #
 	# NOT FOR PRODUCTION USE #
-	vdlLines.append("SECURITY_SETTING_IS; MaximumPasswordAge; <100; A maximum password age has been set; 10")
-	vdlLines.append('SECURITY_SETTING_NOT; NewGuestName; "Guest"; Guest renamed; 7')
-	vdlLines.append("SOFTWARE_INSTALLED; Google Chrome; 3")
 	# END DEBUG CODE #
 
 	return vdlLines

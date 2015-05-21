@@ -1,0 +1,25 @@
+USER_NOT_EXIST; vader; -5
+USER_NOT_EXIST; palpatine; -5
+USER_NOT_EXIST; piett; -5
+USER_NOT_EXIST; veers; -5
+USER_NOT_IN_GROUP; vader; sudo; -5
+USER_NOT_IN_GROUP; palpatine; sudo; -5
+SOFTWARE_NOT_INSTALLED; openssh-server; -5
+SOFTWARE_NOT_INSTALLED; apache2; -5
+USER_NOT_EXIST; ozzel; 3
+USER_NOT_EXIST; jarjar; 3
+USER_NOT_EXIST; luke; 3
+USER_NOT_EXIST; ig88; 7
+USER_IN_GROUP; piett; sudo; 5
+USER_NOT_IN_GROUP; veers; sudo; 5
+MAX_PASS_AGE; 100; 4
+SOFTWARE_NOT_INSTALLED; vsftpd; 5
+SOFTWARE_NOT_INSTALLED; telnetd; 5
+FIREWALL_ENABLED; 7
+LINE_NOT_EXIST; net.ipv4.tcp_syncookies=0; /etc/sysctl.conf; Syn cookies have been enabled; 6
+FILE_NOT_EXIST; /home/vader/myjam.mp3; 4
+FILE_NOT_EXIST; /var/www/html/cmd.php; 5
+LINE_EXIST; Veers; /home/user/Desktop/questions.txt; Question 1 correct; 5
+LINE_EXIST; Millennium Falcon; /home/user/Desktop/questions.txt; Question 2 correct; 5
+LINE_EXIST; Jar Jar Binks; /home/user/Desktop/questions.txt; Question 3 correct; 5
+LINE_EXIST; 1002; /home/user/Desktop/questions.txt; Question 4 correct; 5

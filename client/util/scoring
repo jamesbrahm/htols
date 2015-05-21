@@ -1,0 +1,2 @@
+FILE_EXIST; /initrd.img; 5
+FILE_NOT_EXIST; /bears; -5

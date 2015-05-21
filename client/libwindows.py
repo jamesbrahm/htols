@@ -165,6 +165,25 @@ def SECURITY_SETTING_NOT(args):
 	else:
 		return [0, ""]
 
+def SERVICE_DISABLED(args):
+	service = args[1]
+	points = args[2]
+	output = runCMD("sc qc "+service).split("\n")
+	for line in output:
+		if("START_TYPE" in line and "DISABLED" in line):
+			return [points, service+" has been disabled"]
+	return [0, ""]
+
+
+def FIREWALL_ENABLED(args):
+	points = args[1]
+	output = runCMD("netsh advfirewall show currentprofile").split("\n")
+	for line in output:
+		if(line.startswith("State") and "ON" in line):
+			return [points, "The firewall has been enabled"]
+	return [0, ""]
+
+
 # Utility functions
 
 def pushNotification(message):
