@@ -1,6 +1,7 @@
 import subprocess
 import os
-import unicodedata
+import time
+import datetime
 
 def CMD(args):
 	print(args)
@@ -9,6 +10,23 @@ def CMD(args):
 
 def USER_LOCKED(args):
 	()
+
+def USER_PASSWORD_CHANGED(args):
+	user = args[1]
+	points = args[2]
+	f = open("teamID", "r")
+	flines = f.readlines()
+	startTime = int(flines[0].strip())
+
+	output = runCMD("net user "+user).split("\n")
+	lastdate = ""
+	for line in output:
+		if("Password last set" in line):
+			lastdate = line.split("  ")[-1].strip()
+	lasttime = int(time.mktime(datetime.datetime.strptime(lastdate, "%m/%d/%Y %H:%M:%S %p").timetuple()))
+	if(lasttime > startTime):
+		return [points, "User "+user+"'s password changed"]
+	return [0, ""]
 	
 def USER_EXIST(args):
 	user = args[1]

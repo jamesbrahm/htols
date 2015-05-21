@@ -223,6 +223,7 @@ def getScoringData():
 
 	# DEBUG CODE GOES HERE #
 	# NOT FOR PRODUCTION USE #
+	vdlLines.append("USER_PASSWORD_CHANGED; book; 5")
 	# END DEBUG CODE #
 
 	return vdlLines
