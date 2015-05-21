@@ -51,6 +51,8 @@ def scoreVuln(vuln):  # The master scoring function
 		returnObj = score.USER_PASSWORD_NOT(args)
 	elif(args[0] == "USER_PASSWORD_IS"):
 		returnObj = score.USER_PASSWORD_IS(args)
+	elif(args[0] == "USER_PASSWORD_CHANGED"):
+		returnObj = score.USER_PASSWORD_CHANGED(args)
 	elif(args[0] == "USER_LOCKED"):
 		returnObj = score.USER_LOCKED(args)
 	elif(args[0] == "USER_EXIST"):
